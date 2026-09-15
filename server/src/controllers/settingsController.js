@@ -7,9 +7,9 @@ const ShopSettings = require('../models/ShopSettings');
 // @route GET /api/settings
 const getSettings = async (req, res, next) => {
   try {
-    let settings = await ShopSettings.findOne();
+    let settings = await ShopSettings.findOne({ shopId: req.user.shopId });
     if (!settings) {
-      settings = await ShopSettings.create({});
+      settings = await ShopSettings.create({ shopId: req.user.shopId });
     }
     res.status(200).json({ success: true, data: settings });
   } catch (error) {
@@ -21,9 +21,9 @@ const getSettings = async (req, res, next) => {
 // @route PUT /api/settings
 const updateSettings = async (req, res, next) => {
   try {
-    let settings = await ShopSettings.findOne();
+    let settings = await ShopSettings.findOne({ shopId: req.user.shopId });
     if (!settings) {
-      settings = await ShopSettings.create(req.body);
+      settings = await ShopSettings.create({ ...req.body, shopId: req.user.shopId });
     } else {
       Object.assign(settings, req.body);
       await settings.save();

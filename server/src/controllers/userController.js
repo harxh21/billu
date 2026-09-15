@@ -5,7 +5,7 @@ const User = require('../models/User');
 // @route GET /api/users
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await User.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     next(error);
@@ -36,6 +36,7 @@ const createUser = async (req, res, next) => {
       email,
       password: hashedPassword,
       role: role === 'owner' ? 'owner' : 'staff',
+      shopId: req.user.shopId,
     });
 
     res.status(201).json({
@@ -51,7 +52,7 @@ const createUser = async (req, res, next) => {
 // @route PUT /api/users/:id
 const updateUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!user) {
       res.status(404);
       throw new Error('User not found');
@@ -80,7 +81,7 @@ const updateUser = async (req, res, next) => {
 // @route DELETE /api/users/:id
 const deleteUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!user) {
       res.status(404);
       throw new Error('User not found');

@@ -1,12 +1,13 @@
 const Bill = require('../models/Bill');
 
 // Generates sequential invoice numbers like INV-2026-00001
-async function generateInvoiceNumber() {
+async function generateInvoiceNumber(shopId) {
   const year = new Date().getFullYear();
   const prefix = `INV-${year}-`;
 
-  // Find the latest bill for this year, sorted by invoice number descending
+  // Find the latest bill for THIS shop and year, sorted by invoice number descending
   const lastBill = await Bill.findOne({
+    shopId,
     invoiceNumber: { $regex: `^${prefix}` },
   }).sort({ createdAt: -1 });
 

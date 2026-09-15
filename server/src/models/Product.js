@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
   {
+    shopId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, trim: true },
-    sku: { type: String, required: true, unique: true, trim: true, uppercase: true },
+    sku: { type: String, required: true, trim: true, uppercase: true },
     category: { type: String, required: true, trim: true },
     brand: { type: String, trim: true, default: '' },
     description: { type: String, trim: true, default: '' },
@@ -19,6 +20,9 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// SKU only needs to be unique WITHIN a shop, not globally
+productSchema.index({ shopId: 1, sku: 1 }, { unique: true });
 
 productSchema.virtual('stockStatus').get(function () {
   if (this.stockQty === 0) return 'OUT_OF_STOCK';

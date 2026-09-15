@@ -6,7 +6,7 @@ const Bill = require('../models/Bill');
 const getCustomers = async (req, res, next) => {
   try {
     const { search } = req.query;
-    const query = {};
+    const query = { shopId: req.user.shopId };
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -24,13 +24,13 @@ const getCustomers = async (req, res, next) => {
 // @route GET /api/customers/:id
 const getCustomer = async (req, res, next) => {
   try {
-    const customer = await Customer.findById(req.params.id);
+    const customer = await Customer.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!customer) {
       res.status(404);
       throw new Error('Customer not found');
     }
 
-    const bills = await Bill.find({ customer: customer._id }).sort({ createdAt: -1 });
+    const bills = await Bill.find({ customer: customer._id, shopId: req.user.shopId }).sort({ createdAt: -1 });
 
     const totalPurchases = bills.reduce((sum, b) => sum + b.totalAmount, 0);
 
@@ -59,7 +59,7 @@ const createCustomer = async (req, res, next) => {
       res.status(400);
       throw new Error('Name and phone are required');
     }
-    const customer = await Customer.create(req.body);
+    const customer = await Customer.create({ ...req.body, shopId: req.user.shopId });
     res.status(201).json({ success: true, data: customer });
   } catch (error) {
     next(error);
@@ -70,7 +70,7 @@ const createCustomer = async (req, res, next) => {
 // @route PUT /api/customers/:id
 const updateCustomer = async (req, res, next) => {
   try {
-    const customer = await Customer.findById(req.params.id);
+    const customer = await Customer.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!customer) {
       res.status(404);
       throw new Error('Customer not found');
@@ -87,7 +87,7 @@ const updateCustomer = async (req, res, next) => {
 // @route DELETE /api/customers/:id
 const deleteCustomer = async (req, res, next) => {
   try {
-    const customer = await Customer.findById(req.params.id);
+    const customer = await Customer.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!customer) {
       res.status(404);
       throw new Error('Customer not found');

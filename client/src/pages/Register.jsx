@@ -6,31 +6,36 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
 
-export default function Login() {
+export default function Register() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
-      setError('Please enter both email and password');
+    if (!name || !email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
     try {
-      await login(email, password);
+      await register(name, email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Could not create your account. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -43,19 +48,28 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white mb-3">
             <Store size={28} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Stationery Shop</h1>
-          <p className="text-slate-500 text-sm mt-1">Inventory & Billing Management System</p>
+          <h1 className="text-2xl font-bold text-slate-800">Create your shop</h1>
+          <p className="text-slate-500 text-sm mt-1">Set up your own inventory & billing system</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm space-y-4">
           {error && <Alert type="error" message={error} />}
 
           <Input
+            label="Your name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Jane Doe"
+            autoComplete="name"
+          />
+
+          <Input
             label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="owner@shop.com"
+            placeholder="you@example.com"
             autoComplete="email"
           />
 
@@ -65,8 +79,8 @@ export default function Login() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
+              placeholder="At least 6 characters"
+              autoComplete="new-password"
             />
             <button
               type="button"
@@ -78,13 +92,17 @@ export default function Login() {
           </div>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Creating your shop...' : 'Create account'}
           </Button>
 
+          <p className="text-xs text-slate-500 text-center pt-2">
+            You'll be the owner of a brand new shop. You can add staff accounts later from Staff Management.
+          </p>
+
           <p className="text-sm text-slate-600 text-center pt-2">
-            New here?{' '}
-            <Link to="/register" className="text-blue-600 font-medium hover:underline">
-              Create your shop
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 font-medium hover:underline">
+              Sign in
             </Link>
           </p>
         </form>

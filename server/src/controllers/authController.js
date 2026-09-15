@@ -2,11 +2,13 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
-// @desc    Register a new user (owner creates staff accounts via this, or first-time owner setup)
+// @desc    Public signup — always creates a brand new shop with this user as its owner.
+//          Staff accounts are never created here; the owner adds staff later from
+//          Staff Management (see userController.createUser).
 // @route   POST /api/auth/register
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       res.status(400);
@@ -22,12 +24,15 @@ const registerUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await User.create({
+    const user = new User({
       name,
       email,
       password: hashedPassword,
-      role: role === 'owner' ? 'owner' : 'staff',
+      role: 'owner',
     });
+    // A brand-new shop: the owner's own id doubles as the tenant/shopId.
+    user.shopId = user._id;
+    await user.save();
 
     res.status(201).json({
       success: true,

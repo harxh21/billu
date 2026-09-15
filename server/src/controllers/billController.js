@@ -45,7 +45,7 @@ const createBill = async (req, res, next) => {
       }
 
       // Fetch product fresh inside the transaction session
-      const product = await Product.findById(productId).session(session);
+      const product = await Product.findOne({ _id: productId, shopId: req.user.shopId }).session(session);
 
       if (!product) {
         res.status(404);
@@ -85,6 +85,7 @@ const createBill = async (req, res, next) => {
       await StockMovement.create(
         [
           {
+            shopId: req.user.shopId,
             product: product._id,
             type: 'SALE',
             quantity: -quantity, // negative = stock going out
@@ -105,11 +106,12 @@ const createBill = async (req, res, next) => {
       throw new Error('Discount cannot be greater than the bill subtotal + tax');
     }
 
-    const invoiceNumber = await generateInvoiceNumber();
+    const invoiceNumber = await generateInvoiceNumber(req.user.shopId);
 
     const bill = await Bill.create(
       [
         {
+          shopId: req.user.shopId,
           invoiceNumber,
           items: billItems,
           subtotal,
@@ -126,7 +128,7 @@ const createBill = async (req, res, next) => {
 
     // Link the stock movements we just created to this bill for traceability
     await StockMovement.updateMany(
-      { createdBy: req.user._id, type: 'SALE', reference: null, createdAt: { $gte: new Date(Date.now() - 5000) } },
+      { shopId: req.user.shopId, createdBy: req.user._id, type: 'SALE', reference: null, createdAt: { $gte: new Date(Date.now() - 5000) } },
       { reference: bill[0]._id, referenceModel: 'Bill' },
       { session }
     );
@@ -148,7 +150,7 @@ const getBills = async (req, res, next) => {
   try {
     const { search, customer, paymentMethod, startDate, endDate, page = 1, limit = 20 } = req.query;
 
-    const query = {};
+    const query = { shopId: req.user.shopId };
 
     if (search) query.invoiceNumber = { $regex: search, $options: 'i' };
     if (customer) query.customer = customer;
@@ -189,7 +191,7 @@ const getBills = async (req, res, next) => {
 // @route GET /api/bills/:id
 const getBill = async (req, res, next) => {
   try {
-    const bill = await Bill.findById(req.params.id)
+    const bill = await Bill.findOne({ _id: req.params.id, shopId: req.user.shopId })
       .populate('customer', 'name phone email address')
       .populate('createdBy', 'name');
 

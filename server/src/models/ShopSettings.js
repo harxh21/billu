@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const shopSettingsSchema = new mongoose.Schema(
   {
+    shopId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
     shopName: { type: String, default: 'My Stationery Shop' },
     address: { type: String, default: '' },
     phone: { type: String, default: '' },

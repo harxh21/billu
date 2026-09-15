@@ -12,7 +12,7 @@ const addStock = async (req, res, next) => {
       throw new Error('Product and a valid quantity are required');
     }
 
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({ _id: productId, shopId: req.user.shopId });
     if (!product) {
       res.status(404);
       throw new Error('Product not found');
@@ -25,6 +25,7 @@ const addStock = async (req, res, next) => {
     await product.save();
 
     await StockMovement.create({
+      shopId: req.user.shopId,
       product: product._id,
       type: 'PURCHASE',
       quantity: Number(quantity),
@@ -55,7 +56,7 @@ const adjustStock = async (req, res, next) => {
       throw new Error('A reason is required for manual stock adjustments');
     }
 
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({ _id: productId, shopId: req.user.shopId });
     if (!product) {
       res.status(404);
       throw new Error('Product not found');
@@ -66,6 +67,7 @@ const adjustStock = async (req, res, next) => {
     await product.save();
 
     await StockMovement.create({
+      shopId: req.user.shopId,
       product: product._id,
       type: 'ADJUSTMENT',
       quantity: product.stockQty - previousStock,
@@ -86,7 +88,7 @@ const adjustStock = async (req, res, next) => {
 const getMovements = async (req, res, next) => {
   try {
     const { productId, type, page = 1, limit = 30 } = req.query;
-    const query = {};
+    const query = { shopId: req.user.shopId };
     if (productId) query.product = productId;
     if (type) query.type = type;
 

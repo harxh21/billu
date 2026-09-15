@@ -13,17 +13,20 @@ const seed = async () => {
   await connectDB();
 
   // --- Default Owner Account ---
-  const ownerExists = await User.findOne({ email: 'owner@shop.com' });
-  if (!ownerExists) {
+  let owner = await User.findOne({ email: 'owner@shop.com' });
+  if (!owner) {
     const hashedPassword = await bcrypt.hash('owner123', 10);
-    await User.create({
+    owner = new User({
       name: 'Shop Owner',
       email: 'owner@shop.com',
       password: hashedPassword,
       role: 'owner',
     });
+    owner.shopId = owner._id;
+    await owner.save();
     console.log('Created default owner: owner@shop.com / owner123');
   }
+  const shopId = owner.shopId;
 
   // --- Default Staff Account ---
   const staffExists = await User.findOne({ email: 'staff@shop.com' });
@@ -34,14 +37,16 @@ const seed = async () => {
       email: 'staff@shop.com',
       password: hashedPassword,
       role: 'staff',
+      shopId,
     });
     console.log('Created default staff: staff@shop.com / staff123');
   }
 
   // --- Shop Settings ---
-  const settingsExist = await ShopSettings.findOne();
+  const settingsExist = await ShopSettings.findOne({ shopId });
   if (!settingsExist) {
     await ShopSettings.create({
+      shopId,
       shopName: 'Demo Stationery Shop',
       address: '123 Market Road, Your City',
       phone: '9999999999',
@@ -72,9 +77,9 @@ const seed = async () => {
   ];
 
   for (const p of demoProducts) {
-    const exists = await Product.findOne({ sku: p.sku });
+    const exists = await Product.findOne({ sku: p.sku, shopId });
     if (!exists) {
-      await Product.create({ ...p, isSeedData: true });
+      await Product.create({ ...p, shopId, isSeedData: true });
     }
   }
   console.log(`Seeded ${demoProducts.length} demo products (flagged isSeedData: true)`);

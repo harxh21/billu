@@ -5,6 +5,10 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
+// Required behind Render's reverse proxy so express-rate-limit reads the
+// real client IP (X-Forwarded-For) instead of Render's internal proxy IP.
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(

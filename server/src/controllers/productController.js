@@ -6,7 +6,7 @@ const getProducts = async (req, res, next) => {
   try {
     const { search, category, stockFilter, sortBy, sortOrder, page = 1, limit = 20 } = req.query;
 
-    const query = {};
+    const query = { shopId: req.user.shopId };
 
     if (search) {
       query.$or = [
@@ -58,7 +58,7 @@ const getProducts = async (req, res, next) => {
 // @route GET /api/products/:id
 const getProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!product) {
       res.status(404);
       throw new Error('Product not found');
@@ -80,13 +80,13 @@ const createProduct = async (req, res, next) => {
       throw new Error('Name, SKU, category, purchase price and selling price are required');
     }
 
-    const existing = await Product.findOne({ sku: sku.toUpperCase() });
+    const existing = await Product.findOne({ sku: sku.toUpperCase(), shopId: req.user.shopId });
     if (existing) {
       res.status(400);
       throw new Error('A product with this SKU already exists');
     }
 
-    const product = await Product.create(req.body);
+    const product = await Product.create({ ...req.body, shopId: req.user.shopId });
     res.status(201).json({ success: true, data: product });
   } catch (error) {
     next(error);
@@ -97,7 +97,7 @@ const createProduct = async (req, res, next) => {
 // @route PUT /api/products/:id
 const updateProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!product) {
       res.status(404);
       throw new Error('Product not found');
@@ -120,7 +120,7 @@ const updateProduct = async (req, res, next) => {
 // @route DELETE /api/products/:id
 const deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!product) {
       res.status(404);
       throw new Error('Product not found');
@@ -138,7 +138,7 @@ const deleteProduct = async (req, res, next) => {
 // @route GET /api/products/categories/list
 const getCategories = async (req, res, next) => {
   try {
-    const categories = await Product.distinct('category');
+    const categories = await Product.distinct('category', { shopId: req.user.shopId });
     res.status(200).json({ success: true, data: categories });
   } catch (error) {
     next(error);

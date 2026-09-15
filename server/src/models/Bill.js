@@ -15,7 +15,8 @@ const billItemSchema = new mongoose.Schema(
 
 const billSchema = new mongoose.Schema(
   {
-    invoiceNumber: { type: String, required: true, unique: true },
+    shopId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    invoiceNumber: { type: String, required: true },
     items: { type: [billItemSchema], required: true },
     subtotal: { type: Number, required: true },
     discount: { type: Number, default: 0 },
@@ -28,5 +29,7 @@ const billSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+billSchema.index({ shopId: 1, invoiceNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model('Bill', billSchema);

@@ -2,9 +2,9 @@ const Bill = require('../models/Bill');
 const Product = require('../models/Product');
 
 // Helper: aggregate total sales & bill count between two dates
-const salesBetween = async (start, end) => {
+const salesBetween = async (shopId, start, end) => {
   const result = await Bill.aggregate([
-    { $match: { createdAt: { $gte: start, $lte: end }, status: 'COMPLETED' } },
+    { $match: { shopId, createdAt: { $gte: start, $lte: end }, status: 'COMPLETED' } },
     {
       $group: {
         _id: null,
@@ -25,16 +25,17 @@ const getDashboardStats = async (req, res, next) => {
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const todayStats = await salesBetween(startOfToday, endOfToday);
-    const monthStats = await salesBetween(startOfMonth, endOfToday);
+    const shopId = req.user.shopId;
+    const todayStats = await salesBetween(shopId, startOfToday, endOfToday);
+    const monthStats = await salesBetween(shopId, startOfMonth, endOfToday);
 
-    const totalProducts = await Product.countDocuments();
-    const products = await Product.find();
+    const totalProducts = await Product.countDocuments({ shopId });
+    const products = await Product.find({ shopId });
     const totalStockQty = products.reduce((sum, p) => sum + p.stockQty, 0);
     const totalStockValue = products.reduce((sum, p) => sum + p.stockQty * p.purchasePrice, 0);
     const lowStockProducts = products.filter((p) => p.stockStatus === 'LOW_STOCK' || p.stockStatus === 'OUT_OF_STOCK');
 
-    const recentBills = await Bill.find()
+    const recentBills = await Bill.find({ shopId })
       .populate('customer', 'name')
       .sort({ createdAt: -1 })
       .limit(5);
@@ -73,7 +74,7 @@ const getSalesChart = async (req, res, next) => {
     start.setHours(0, 0, 0, 0);
 
     const results = await Bill.aggregate([
-      { $match: { createdAt: { $gte: start }, status: 'COMPLETED' } },
+      { $match: { shopId: req.user.shopId, createdAt: { $gte: start }, status: 'COMPLETED' } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
@@ -97,7 +98,7 @@ const getBestSelling = async (req, res, next) => {
     const limit = parseInt(req.query.limit, 10) || 10;
 
     const results = await Bill.aggregate([
-      { $match: { status: 'COMPLETED' } },
+      { $match: { shopId: req.user.shopId, status: 'COMPLETED' } },
       { $unwind: '$items' },
       {
         $group: {
@@ -120,7 +121,7 @@ const getBestSelling = async (req, res, next) => {
 // @route GET /api/reports/stock
 const getStockReport = async (req, res, next) => {
   try {
-    const products = await Product.find().sort({ stockQty: 1 });
+    const products = await Product.find({ shopId: req.user.shopId }).sort({ stockQty: 1 });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     next(error);
