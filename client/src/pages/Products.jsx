@@ -130,7 +130,7 @@ export default function Products() {
                 <td className="px-4 py-3">
                   {user?.role === 'owner' && (
                     <div className="flex gap-2">
-                      <button onClick={() => navigate(`/products/${p._id}/edit`)} className="text-slate-400 hover:text-blue-600">
+                      <button onClick={() => navigate(`/products/${p._id}/edit`)} className="text-slate-400 hover:text-indigo-600">
                         <Edit2 size={16} />
                       </button>
                       <button onClick={() => setDeleteTarget(p)} className="text-slate-400 hover:text-red-600">

@@ -47,7 +47,7 @@ const seed = async () => {
   if (!settingsExist) {
     await ShopSettings.create({
       shopId,
-      shopName: 'Demo Stationery Shop',
+      shopName: 'Demo Shop',
       address: '123 Market Road, Your City',
       phone: '9999999999',
       email: 'shop@example.com',

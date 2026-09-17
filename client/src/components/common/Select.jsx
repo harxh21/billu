@@ -3,7 +3,7 @@ export default function Select({ label, options = [], className = '', ...props }
     <div className="flex flex-col gap-1">
       {label && <label className="text-sm font-medium text-slate-700">{label}</label>}
       <select
-        className={`px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${className}`}
+        className={`px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white ${className}`}
         {...props}
       >
         {options.map((opt) => (

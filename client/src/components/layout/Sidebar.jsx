@@ -11,6 +11,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import Logo from '../common/Logo';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['owner', 'staff'] },
@@ -33,8 +34,9 @@ export default function Sidebar({ isOpen }) {
         isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}
     >
-      <div className="h-16 flex items-center px-6 border-b border-slate-200">
-        <span className="font-bold text-lg text-blue-600">StationeryPro</span>
+      <div className="h-16 flex items-center gap-2.5 px-6 border-b border-slate-200">
+        <Logo size={30} />
+        <span className="font-extrabold text-lg text-slate-800">Billu</span>
       </div>
       <nav className="p-3 flex flex-col gap-1">
         {navItems
@@ -45,7 +47,7 @@ export default function Sidebar({ isOpen }) {
               to={item.to}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'
+                  isActive ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50'
                 }`
               }
             >

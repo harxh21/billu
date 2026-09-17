@@ -56,7 +56,7 @@ export default function Dashboard() {
       <div className="flex flex-wrap gap-3">
         {user?.role === 'owner' && (
           <Link to="/products/new" className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-            <PlusCircle size={16} className="text-blue-600" /> Add Product
+            <PlusCircle size={16} className="text-indigo-600" /> Add Product
           </Link>
         )}
         <Link to="/billing" className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">

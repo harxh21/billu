@@ -22,7 +22,7 @@ export default function Navbar({ onMenuClick }) {
           <p className="text-sm font-medium text-slate-800">{user?.name}</p>
           <p className="text-xs text-slate-500 capitalize">{user?.role}</p>
         </div>
-        <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+        <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
           {user?.name?.charAt(0)?.toUpperCase()}
         </div>
         <button onClick={handleLogout} className="text-slate-400 hover:text-red-600" title="Logout">

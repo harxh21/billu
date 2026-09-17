@@ -71,7 +71,7 @@ export default function Customers() {
               <td className="px-4 py-3 text-sm text-slate-500">{c.address || '-'}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <button onClick={() => navigate(`/customers/${c._id}`)} className="text-slate-400 hover:text-blue-600">
+                  <button onClick={() => navigate(`/customers/${c._id}`)} className="text-slate-400 hover:text-indigo-600">
                     <Eye size={16} />
                   </button>
                   {user?.role === 'owner' && (

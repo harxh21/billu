@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const shopSettingsSchema = new mongoose.Schema(
   {
     shopId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
-    shopName: { type: String, default: 'My Stationery Shop' },
+    shopName: { type: String, default: 'My Shop' },
     address: { type: String, default: '' },
     phone: { type: String, default: '' },
     email: { type: String, default: '' },

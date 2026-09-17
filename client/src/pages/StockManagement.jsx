@@ -11,7 +11,7 @@ import { formatDateTime } from '../utils/formatCurrency';
 
 const typeStyles = {
   PURCHASE: 'bg-green-100 text-green-700',
-  SALE: 'bg-blue-100 text-blue-700',
+  SALE: 'bg-indigo-100 text-indigo-700',
   RETURN: 'bg-purple-100 text-purple-700',
   ADJUSTMENT: 'bg-orange-100 text-orange-700',
 };

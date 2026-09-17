@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Store } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
+import Logo from '../components/common/Logo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -37,17 +38,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen relative flex items-center justify-center bg-indigo-950 px-4 py-12 overflow-hidden">
+      {/* Decorative glow blobs */}
+      <div className="pointer-events-none absolute -top-24 -left-24 w-80 h-80 rounded-full bg-indigo-600/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-amber-500/20 blur-3xl" />
+
+      <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white mb-3">
-            <Store size={28} />
+          <div className="inline-flex mb-4">
+            <Logo size={56} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Stationery Shop</h1>
-          <p className="text-slate-500 text-sm mt-1">Inventory & Billing Management System</p>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">Billu</h1>
+          <p className="text-indigo-200 text-sm mt-1">Inventory & billing, made simple — for any shop</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-2xl shadow-indigo-950/40 space-y-4 border-t-4 border-amber-500">
           {error && <Alert type="error" message={error} />}
 
           <Input
@@ -55,7 +60,7 @@ export default function Login() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="owner@shop.com"
+            placeholder="you@example.com"
             autoComplete="email"
           />
 
@@ -83,7 +88,7 @@ export default function Login() {
 
           <p className="text-sm text-slate-600 text-center pt-2">
             New here?{' '}
-            <Link to="/register" className="text-blue-600 font-medium hover:underline">
+            <Link to="/register" className="text-indigo-600 font-semibold hover:underline">
               Create your shop
             </Link>
           </p>

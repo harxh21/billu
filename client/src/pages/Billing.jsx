@@ -132,7 +132,7 @@ export default function Billing() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products by name or SKU..."
-              className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <Select
@@ -148,12 +148,12 @@ export default function Billing() {
               key={p._id}
               onClick={() => addToCart(p)}
               disabled={p.stockQty === 0}
-              className="text-left bg-white border border-slate-200 rounded-xl p-3 hover:border-blue-400 hover:shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-left bg-white border border-slate-200 rounded-xl p-3 hover:border-indigo-400 hover:shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <p className="text-sm font-medium text-slate-800 line-clamp-2">{p.name}</p>
               <p className="text-xs text-slate-400 mt-1">{p.sku}</p>
               <div className="flex justify-between items-center mt-2">
-                <span className="text-sm font-semibold text-blue-600">{formatCurrency(p.sellingPrice)}</span>
+                <span className="text-sm font-semibold text-indigo-600">{formatCurrency(p.sellingPrice)}</span>
                 <span className={`text-xs ${p.stockQty === 0 ? 'text-red-500' : 'text-slate-400'}`}>
                   {p.stockQty} {p.unit}
                 </span>
